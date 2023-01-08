@@ -8,8 +8,11 @@ public class NodoA1 extends Nodo {
         try {
             color = "\u001B[31m";
             name = "Nodo A1";
-            server = new ServerSocket(8080);
+            server = new ServerSocket(8000);
             sockets = new Socket[numConexiones];
+            isEverywhere = true;
+            isEager = true;
+            isActive = true;
         } catch (Exception e) {
             System.out.println(e.getMessage());
         }

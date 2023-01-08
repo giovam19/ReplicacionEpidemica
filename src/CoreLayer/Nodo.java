@@ -14,6 +14,12 @@ public class Nodo extends Thread {
     protected ObjectInputStream input;
     protected ObjectOutputStream output;
 
+    protected boolean isEverywhere;
+    protected boolean isEager;
+    protected boolean isActive;
+
+    private static File file = new File("src/transactions.txt");;
+
     private void startNodo() {
         makeConnections();
         nodoEngine();
@@ -21,23 +27,51 @@ public class Nodo extends Thread {
 
     protected void nodoEngine() {
         try {
-            for (int i = 0; i < numConexiones; i++) {
-                output = new ObjectOutputStream(sockets[i].getOutputStream());
-                output.writeObject("Hi Client from " + name);
-            }
+            /*everywhereEagerActive();
 
-            for (int i = 0; i < numConexiones; i++) {
-                input = new ObjectInputStream(sockets[i].getInputStream());
-                String message = (String) input.readObject();
-                System.out.println(color + " " + name + " Message Received: " + message);
-            }
-
-            input.close();
-            output.close();
+            while (true) {
+                for (int i = 0; i < numConexiones; i++) {
+                    try {
+                        String s = receiveMsgNonBlock(sockets[i]);
+                        System.out.println(color + name + " Message Received: " + s);
+                    } catch (Exception ignored) {
+                    }
+                }
+            }*/
         } catch (Exception e) {
             System.out.println(e.getMessage());
         }
     }
+
+    private void everywhereEagerActive() throws IOException {
+        for (int i = 0; i < numConexiones; i++) {
+            if ((sockets[i].getPort() >= 8000 && sockets[i].getPort() < 9000) || (sockets[i].getLocalPort() >= 8000 && sockets[i].getLocalPort() < 9000)) {
+                sendMsg(sockets[i], "Hi Client from " + name);
+            }
+        }
+    }
+
+    private void sendMsg(Socket socket, String msg) throws IOException {
+        output = new ObjectOutputStream(socket.getOutputStream());
+        output.writeObject(msg);
+    }
+
+    private String receiveMsg(Socket socket) throws Exception {
+        input = new ObjectInputStream(socket.getInputStream());
+        String message = (String) input.readObject();
+
+        return message;
+    }
+
+    private String receiveMsgNonBlock(Socket socket) throws Exception {
+        socket.setSoTimeout(5);
+        input = new ObjectInputStream(socket.getInputStream());
+        String message = (String) input.readObject();
+
+        socket.setSoTimeout(0);
+        return message;
+    }
+
 
     protected void makeConnections() {}
 

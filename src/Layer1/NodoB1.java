@@ -2,6 +2,7 @@ package Layer1;
 
 import CoreLayer.Nodo;
 
+import java.net.ServerSocket;
 import java.net.Socket;
 
 public class NodoB1 extends Nodo {
@@ -10,7 +11,11 @@ public class NodoB1 extends Nodo {
             color = "\u001B[35m";
             name = "Nodo B1";
             numConexiones = 1;
+            server = new ServerSocket(9001);
             sockets = new Socket[numConexiones];
+            isEverywhere = false;
+            isEager = false;
+            isActive = false;
         } catch (Exception e) {
             System.out.println(e.getMessage());
         }
@@ -19,7 +24,7 @@ public class NodoB1 extends Nodo {
     @Override
     protected void makeConnections() {
         try {
-            sockets[0] = new Socket("localhost", 8081);
+            sockets[0] = server.accept();
         } catch (Exception e) {
             System.out.println(e.getMessage() + " " + name);
         }

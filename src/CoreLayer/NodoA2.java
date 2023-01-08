@@ -9,8 +9,11 @@ public class NodoA2 extends Nodo {
             color = "\u001B[32m";
             name = "Nodo A2";
             numConexiones = 3;
-            server = new ServerSocket(8081);
+            server = new ServerSocket(8001);
             sockets = new Socket[numConexiones];
+            isEverywhere = true;
+            isEager = true;
+            isActive = true;
         } catch (Exception e) {
             System.out.println(e.getMessage());
         }
@@ -19,8 +22,8 @@ public class NodoA2 extends Nodo {
     @Override
     protected void makeConnections() {
         try {
-            sockets[0] = new Socket("localhost", 8080);
-            sockets[1] = server.accept();
+            sockets[0] = new Socket("localhost", 8000);
+            sockets[1] = new Socket("localhost", 9001);
             sockets[2] = server.accept();
         } catch (Exception e) {
             System.out.println(e.getMessage() + " " + name);

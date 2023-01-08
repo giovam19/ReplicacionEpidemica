@@ -6,6 +6,11 @@ import Layer1.NodoB2;
 import Layer2.NodoC1;
 import Layer2.NodoC2;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.util.Random;
+import java.util.Scanner;
+
 public class Main {
     public static void main(String[] args) {
         NodoA1 a1 = new NodoA1();
@@ -23,5 +28,26 @@ public class Main {
         b2.start();
         c1.start();
         c2.start();
+
+        //readTransactions();
+    }
+
+    private static void readTransactions() {
+        try {
+            File file = new File("src/transactions.txt");
+            Scanner scanner = new Scanner(file);
+            Random rand = new Random();
+
+            while (scanner.hasNextLine()) {
+                int n = rand.nextInt(1000-500+1) + 500;
+                Thread.sleep(n);
+                String data = scanner.nextLine();
+                System.out.println(data);
+            }
+
+            scanner.close();
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+        }
     }
 }
