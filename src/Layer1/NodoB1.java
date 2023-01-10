@@ -13,9 +13,6 @@ public class NodoB1 extends Nodo {
             numConexiones = 1;
             server = new ServerSocket(9001);
             sockets = new Socket[numConexiones];
-            isEverywhere = false;
-            isEager = false;
-            isActive = false;
         } catch (Exception e) {
             System.out.println(e.getMessage());
         }

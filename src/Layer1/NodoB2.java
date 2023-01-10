@@ -13,9 +13,6 @@ public class NodoB2 extends Nodo {
             numConexiones = 3;
             server = new ServerSocket(9000);
             sockets = new Socket[numConexiones];
-            isEverywhere = false;
-            isEager = false;
-            isActive = false;
         } catch (Exception e) {
             System.out.println(e.getMessage());
         }
@@ -27,18 +24,6 @@ public class NodoB2 extends Nodo {
             sockets[0] = server.accept();
             sockets[1] = new Socket("localhost", 7000);
             sockets[2] = new Socket("localhost", 7001);
-        } catch (Exception e) {
-            System.out.println(e.getMessage());
-        }
-    }
-
-    @Override
-    protected void nodoEngine() {
-        try {
-            super.nodoEngine();
-
-            sockets[0].close();
-            server.close();
         } catch (Exception e) {
             System.out.println(e.getMessage());
         }
