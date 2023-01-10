@@ -12,18 +12,18 @@ public class Main {
             NodoA1 a1 = new NodoA1();
             NodoA2 a2 = new NodoA2();
             NodoA3 a3 = new NodoA3();
-            /*NodoB1 b1 = new NodoB1();
+            NodoB1 b1 = new NodoB1();
             NodoB2 b2 = new NodoB2();
             NodoC1 c1 = new NodoC1();
-            NodoC2 c2 = new NodoC2();*/
+            NodoC2 c2 = new NodoC2();
 
             a1.start();
             a2.start();
             a3.start();
-            /*b1.start();
+            b1.start();
             b2.start();
             c1.start();
-            c2.start();*/
+            c2.start();
 
             TransactionReader reader = new TransactionReader();
             Thread.sleep(1000);

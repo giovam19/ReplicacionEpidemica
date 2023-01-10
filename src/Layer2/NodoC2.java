@@ -2,17 +2,30 @@ package Layer2;
 
 import CoreLayer.Nodo;
 
-import java.net.ServerSocket;
-import java.net.Socket;
+import java.io.FileWriter;
+import java.io.PrintWriter;
+import java.net.InetSocketAddress;
+import java.nio.channels.Selector;
+import java.nio.channels.ServerSocketChannel;
+import java.util.Arrays;
 
 public class NodoC2 extends Nodo {
     public NodoC2() {
         try {
             color = "\u001B[37m";
             name = "Nodo C2";
-            numConexiones = 1;
-            server = new ServerSocket(7001);
-            sockets = new Socket[numConexiones];
+            selector = Selector.open();
+            socketChannel = ServerSocketChannel.open();
+            serverSocket = socketChannel.socket();
+
+            serverSocket.bind(new InetSocketAddress("localhost", 7001));
+            socketChannel.configureBlocking(false);
+            socketChannel.register(selector, socketChannel.validOps(), null);
+
+            Arrays.fill(version, 0);
+            fileWriter = new FileWriter("src/Layer2/logVersionesC2.txt", false);
+            pw = new PrintWriter(fileWriter, false);
+            pw.flush();
         } catch (Exception e) {
             System.out.println(e.getMessage());
         }
@@ -21,9 +34,17 @@ public class NodoC2 extends Nodo {
     @Override
     protected void makeConnections() {
         try {
-            sockets[0] = server.accept();
         } catch (Exception e) {
             System.out.println(e.getMessage() + " " + name);
+        }
+    }
+
+    @Override
+    protected void nodoEngine(String data) {
+        try {
+            lazyReplicacionPasiva(data);
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 }

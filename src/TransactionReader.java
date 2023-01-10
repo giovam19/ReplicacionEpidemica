@@ -1,37 +1,27 @@
 import java.io.File;
-import java.io.IOException;
-import java.io.ObjectOutputStream;
 import java.net.InetSocketAddress;
-import java.net.ServerSocket;
-import java.net.Socket;
 import java.nio.ByteBuffer;
 import java.nio.channels.SocketChannel;
 import java.util.Random;
 import java.util.Scanner;
 
 public class TransactionReader {
-    private ServerSocket server;
-    private Socket[] coreLayer;
-    private Socket layer1;
-    private Socket layer2;
     private File file;
-    private ObjectOutputStream output;
+    private int minTime = 500;
+    private int maxTime = 1000;
 
-    private SocketChannel[] cCoreLayer;
+    private SocketChannel[] nodos;
 
     public TransactionReader() {
         try {
             file = new File("src/transactions.txt");
-            /*server = new ServerSocket(5000);
 
-            coreLayer = new Socket[3];
-            coreLayer[0] = server.accept();
-            coreLayer[1] = server.accept();
-            coreLayer[2] = server.accept();*/
-            cCoreLayer = new SocketChannel[3];
-            cCoreLayer[0] = SocketChannel.open(new InetSocketAddress("localhost", 8000));
-            cCoreLayer[1] = SocketChannel.open(new InetSocketAddress("localhost", 8001));
-            cCoreLayer[2] = SocketChannel.open(new InetSocketAddress("localhost", 8002));
+            nodos = new SocketChannel[5];
+            nodos[0] = SocketChannel.open(new InetSocketAddress("localhost", 8000));
+            nodos[1] = SocketChannel.open(new InetSocketAddress("localhost", 8001));
+            nodos[2] = SocketChannel.open(new InetSocketAddress("localhost", 8002));
+            nodos[3] = SocketChannel.open(new InetSocketAddress("localhost", 9001));
+            nodos[4] = SocketChannel.open(new InetSocketAddress("localhost", 7001));
         } catch (Exception e) {
             System.out.println(e.getMessage());
         }
@@ -43,7 +33,7 @@ public class TransactionReader {
             Random rand = new Random();
 
             while (scanner.hasNextLine()) {
-                int n = rand.nextInt(1000-500+1) + 500;
+                int n = rand.nextInt(maxTime-minTime+1) + minTime;
                 Thread.sleep(n);
                 String data = scanner.nextLine();
 
@@ -60,10 +50,25 @@ public class TransactionReader {
         Random rand = new Random();
         if (data.contains("b<")) {
             //read
+            String[] split = data.replace("b<", "").replace(">", "").split(", ");
+            int nodo = Integer.parseInt(split[0]);
+            String s = "L12-"+split[1]+", "+split[2]+", "+split[3];
+
+            switch (nodo) {
+                case 0:
+                    writeToServer(data, nodos[0]);
+                    break;
+                case 1:
+                    writeToServer(s, nodos[3]);
+                    break;
+                case 2:
+                    writeToServer(s, nodos[4]);
+                    break;
+            }
         } else {
             //write
             int j = rand.nextInt(3);
-            writeToServer(data, cCoreLayer[j]);
+            writeToServer(data, nodos[j]);
         }
     }
 

@@ -13,8 +13,6 @@ public class NodoA1 extends Nodo {
         try {
             color = "\u001B[31m";
             name = "Nodo A1";
-            /*server = new ServerSocket(8000);
-            sockets = new Socket[numConexiones];*/
             selector = Selector.open();
             socketChannel = ServerSocketChannel.open();
             serverSocket = socketChannel.socket();
@@ -38,10 +36,6 @@ public class NodoA1 extends Nodo {
         try {
             client[0] = SocketChannel.open(new InetSocketAddress("localhost", 8001));
             client[1] = SocketChannel.open(new InetSocketAddress("localhost", 8002));
-            /*socketReader = new Socket("localhost", 5000);
-            for (int i = 0; i < numConexiones; i++) {
-                sockets[i] = server.accept();
-            }*/
         } catch (Exception e) {
             System.out.println(e.getMessage() + " " + name);
         }
