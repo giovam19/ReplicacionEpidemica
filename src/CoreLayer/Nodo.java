@@ -8,9 +8,7 @@ import java.nio.channels.SelectionKey;
 import java.nio.channels.Selector;
 import java.nio.channels.ServerSocketChannel;
 import java.nio.channels.SocketChannel;
-import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.Queue;
+import java.util.*;
 
 public class Nodo extends Thread {
     protected String color;
@@ -30,11 +28,12 @@ public class Nodo extends Thread {
 
     protected SocketChannel[] client;
 
-    private Queue<String> queue = new LinkedList<>();
-    private boolean waitAck = false;
-    private int acks = 0;
-
-    private static File file = new File("src/transactions.txt");
+    protected Queue<String> queue = new LinkedList<>();
+    protected boolean waitAck = false;
+    protected int acks = 0;
+    protected int[] version = new int[20];
+    protected FileWriter fileWriter;
+    protected PrintWriter pw;
 
     private void startNodo() {
         makeConnections();
@@ -55,6 +54,8 @@ public class Nodo extends Thread {
                     for (int i = 0; i < 3; i++) {
                         nodoEngine(actions[i]);
                     }
+
+                    continue;
                 }
 
                 selector.select();
@@ -135,6 +136,8 @@ public class Nodo extends Thread {
             System.out.println(color + name + " send " + data);
 
             //update
+            updateVersion(data);
+            System.out.println(color + name + " version: " + Arrays.toString(version));
 
             //wait ACK
             waitAck = true;
@@ -143,7 +146,8 @@ public class Nodo extends Thread {
             //update and send ACk
 
             //update
-            System.out.println(color + name + " receive " + data);
+            updateVersion(data);
+            System.out.println(color + name + " version " + Arrays.toString(version));
 
             //send ACK
             for (int i = 0; i < numConexiones; i++) {
@@ -157,11 +161,27 @@ public class Nodo extends Thread {
         }
     }
 
+    private void updateVersion(String data) throws Exception {
+        String n = data.replace("ACK-w(", "");
+        n = n.replace(")", "");
+        String[] split = n.split(",");
+        int val = Integer.parseInt(split[0]);
+        int pos = Integer.parseInt(split[1]) - 1;
+        System.out.println(color + name + " pos: " + pos + " val: " + val);
+        if (pos > -1 && pos < 20) {
+            version[pos] = val;
+            String s = Arrays.toString(version) + ", " + new Date() + "\n";
+            fileWriter.write(s);
+            fileWriter.flush();
+        }
+    }
+
     private void writeToClient(String message, SocketChannel client) throws Exception {
         ByteBuffer buffer = ByteBuffer.allocate(1024);
         buffer.put(message.getBytes());
         buffer.flip();
         client.write(buffer);
+        Thread.sleep(0, 5);
     }
 
 

@@ -1,16 +1,19 @@
 package CoreLayer;
 
+import java.io.FileWriter;
+import java.io.PrintWriter;
 import java.net.InetSocketAddress;
 import java.nio.channels.Selector;
 import java.nio.channels.ServerSocketChannel;
 import java.nio.channels.SocketChannel;
+import java.util.Arrays;
 
 public class NodoA3 extends Nodo {
     public NodoA3() {
         try {
             color = "\u001B[33m";
             name = "Nodo A3";
-            numConexiones = 3;
+            numConexiones = 2;
             /*server = new ServerSocket(8002);
             sockets = new Socket[numConexiones];*/
             selector = Selector.open();
@@ -22,6 +25,10 @@ public class NodoA3 extends Nodo {
             socketChannel.register(selector, socketChannel.validOps(), null);
 
             client = new SocketChannel[numConexiones];
+            Arrays.fill(version, 0);
+            fileWriter = new FileWriter("src/CoreLayer/logVersionesA3.txt", false);
+            pw = new PrintWriter(fileWriter, false);
+            pw.flush();
         } catch (Exception e) {
             System.out.println(e.getMessage());
         }

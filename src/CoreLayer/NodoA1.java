@@ -1,9 +1,12 @@
 package CoreLayer;
 
+import java.io.FileWriter;
+import java.io.PrintWriter;
 import java.net.InetSocketAddress;
 import java.nio.channels.Selector;
 import java.nio.channels.ServerSocketChannel;
 import java.nio.channels.SocketChannel;
+import java.util.Arrays;
 
 public class NodoA1 extends Nodo {
     public NodoA1() {
@@ -21,6 +24,10 @@ public class NodoA1 extends Nodo {
             socketChannel.register(selector, socketChannel.validOps(), null);
 
             client = new SocketChannel[numConexiones];
+            Arrays.fill(version, 0);
+            fileWriter = new FileWriter("src/CoreLayer/logVersionesA1.txt", false);
+            pw = new PrintWriter(fileWriter, false);
+            pw.flush();
         } catch (Exception e) {
             System.out.println(e.getMessage());
         }
